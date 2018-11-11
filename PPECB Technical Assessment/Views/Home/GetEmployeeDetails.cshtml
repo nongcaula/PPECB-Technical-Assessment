@@ -1,0 +1,131 @@
+﻿@model PPECB_Technical_Assessment.Models.Employee
+
+@using (Ajax.BeginForm("", "Home", FormMethod.Post, new AjaxOptions { UpdateTargetId= "result" }, new { id = "DetailsForm" }))
+{
+
+    @Html.AntiForgeryToken()
+    <div id="result"></div>
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.firstName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.firstName, new { htmlAttributes = new { @class = "form-control",@id= "firstName" } })
+                @Html.ValidationMessageFor(model => model.firstName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.lastName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.lastName, new { htmlAttributes = new { @class = "form-control", @id = "lastName" } })
+                @Html.ValidationMessageFor(model => model.lastName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.age, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.age, new { htmlAttributes = new { @class = "form-control", @id = "age" } })
+                @Html.ValidationMessageFor(model => model.age, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group container">
+            @Html.Label("Gender", htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="radio-inline">
+                @Html.RadioButtonFor(s =>s.gender,"M", new { @id="rdo1"}) Male
+            </label>
+            <label class="radio-inline">
+                @Html.RadioButtonFor(s => s.gender,"F", new { @id = "rdo2" }) Female
+            </label>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10" id="addtbtn">
+                <input type="button" value="Add Employee" id="btnadd" class="btn btn-primary" />
+            </div>
+            <div class="col-md-offset-2 col-md-10" id="editbtn">
+                <input type="button" value="Save Changes" id="btnedit"  class="btn btn-primary" />
+            </div>
+            <div class="col-md-10 hidden" id="hiddenpanel">
+                <div class="panel panel-danger">
+                    <div class="panel-body">Are you sure you want to delete this employee?</div>
+                </div> 
+                <div class="col-md-offset-8 col-md-10" id="deletebtn">
+                    <input type="button" value="Delete Employee" id="btnDel" class="btn btn-danger" />
+                </div>
+            </div>
+           
+        </div>
+    </div>
+}
+<script>
+
+    function TimerReload() {
+        location.reload();
+    }
+    $(document).ready(function () {
+        $("#btnadd").on('click', function (event) {
+            event.preventDefault();
+            AddNewEmployee()
+        });
+    });
+
+    $(document).ready(function () {
+        $("#btnDel").on('click', function (event) {
+            event.preventDefault();
+            DeleteEmployee();
+        });
+    });
+    $(document).ready(function () {
+        $("#btnedit").on('click', function (event) {
+            event.preventDefault();
+            EditEmployee();
+        });
+    });
+
+
+    function AddNewEmployee() {
+        var form = $("#DetailsForm")
+        form.attr("action", "/Home/AddEmployeeDetails");
+        var url = form.attr('action');
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: form.serialize(),
+            success: function (data) {
+                $("#result").html(data);
+                setTimeout(TimerReload, 3000)
+            }
+        });
+    }
+    function EditEmployee() {
+        var form = $("#DetailsForm");
+        form.attr("action", "/Home/EditEmployeeDetails");
+       var url= form.attr("action")
+        $.ajax({
+            method: "PUT",
+            url: url,
+            data: form.serialize(),
+            success: function (data) {
+                $("#result").html(data);
+                setTimeout(TimerReload, 3000)
+            }
+        });
+    }
+    function DeleteEmployee() {
+        var form = $("#DetailsForm");
+        form.attr("action", "/Home/DeleteEmployee");
+        var url = form.attr("action")
+        $.ajax({
+            method: "DELETE",
+            url: url,
+            data: form.serialize(),
+            success: function (data) {
+                $("#result").html(data);
+                setTimeout(TimerReload, 3000)
+            }
+        });
+    }
+</script>

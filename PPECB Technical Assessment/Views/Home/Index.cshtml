@@ -1,0 +1,114 @@
+﻿@model IEnumerable<PPECB_Technical_Assessment.Models.Employee>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Employee Details</h2>
+
+<p>
+    <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#EmployeeModal" onclick="LoadEmployeeAddModal(0)">Create New Employee</button>
+</p>
+<table class="table table-striped table-condensed table-responsive">
+    <tr>
+        <th>
+            @Html.DisplayName("First-Name")
+        </th>
+        <th>
+            @Html.DisplayName("Last-Name")
+        </th>
+        <th>
+            @Html.DisplayName("Age")
+        </th>
+        <th>
+            @Html.DisplayName("Gender")
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.firstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.lastName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.age)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.gender)
+        </td>
+        <td>
+            <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#EmployeeModal" onclick="LoadEmployeeViewModal(@item.id)">View</button>
+            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#EmployeeModal" onclick="LoadEmployeeEditModal(@item.id)">Edit</button>
+            <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#EmployeeModal" onclick="LoadDeleteEmployeeModal(@item.id)">Delete</button>
+        </td>
+    </tr>
+}
+
+</table>
+
+<div class="modal fade" id="EmployeeModal" tabindex="-1" role="dialog" aria-labelledby="EmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EmployeeModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="loadEmpDetails"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+    function LoadEmployeeEditModal(id) {
+        $("#EmployeeModalLabel").text("Edit Employee Details");
+        $("#loadEmpDetails").load('/Home/GetEmployeeDetails/?id=' + id, function (){
+            $("#deletebtn").hide();
+            $("#addtbtn").hide();
+        })
+       
+    }
+    function LoadEmployeeAddModal(id) {
+        $("#EmployeeModalLabel").text("Add New Employee");
+        $("#loadEmpDetails").load('/Home/GetEmployeeDetails/?id=' + id, function () {
+            $("#deletebtn").hide();
+            $("#editbtn").hide();
+
+        })
+    }
+    function LoadDeleteEmployeeModal(id) {
+        $("#EmployeeModalLabel").text("Delete Employee");
+        $("#loadEmpDetails").load('/Home/GetEmployeeDetails/?id=' + id, function () {
+            //$("#deletebtn").hide();
+            $("#editbtn").hide();
+            $("#addtbtn").hide();
+            $("#firstName").attr("readonly","readonly");
+            $("#lastName").attr("readonly", "readonly");
+            $("#age").attr("readonly", "readonly");
+            $("#rdo1").attr('disabled', true);
+            $("#rdo2").attr("disabled", true);
+            $("#hiddenpanel").removeClass("hidden"); 
+        })
+    }
+
+    function LoadEmployeeViewModal(id) {
+        $("#EmployeeModalLabel").text("View Employee Details");
+        $("#loadEmpDetails").load('/Home/GetEmployeeDetails/?id=' + id, function () {
+            $("#editbtn").hide();
+            $("#deletebtn").hide();
+            $("#addtbtn").hide();
+        })
+    }
+
+</script>
